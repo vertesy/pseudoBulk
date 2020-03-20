@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------------------------------
 # for https://github.com/10XGenomics/subset-bam
 
-"I did it in /Users/abel.vertesy/GitHub/OrgRepCard/ORC.elements/Write.barcodes.per.cluster.4.split-bam.R"
+"I did it in ~/GitHub/OrgRepCard/ORC.elements/Write.barcodes.per.cluster.4.split-bam.R"
 
 #  ------------------------------------------------------------
-get.ls.of.CBCs <- function(scobj = combined.obj, ident = 'integrated_snn_res.0.3', 
-                           plotit=T, trim.libName=F) { # 
+get.ls.of.CBCs <- function(scobj = combined.obj, ident = 'integrated_snn_res.0.3',
+                           plotit=T, trim.libName=F) { #
   Idents(scobj) <- ident
   id_x = Idents(scobj)
   dsets = unique(stringr::str_split_fixed(names(id_x), pattern = '_', n = 2)[,2])
@@ -17,7 +17,7 @@ get.ls.of.CBCs <- function(scobj = combined.obj, ident = 'integrated_snn_res.0.3
   print("Cluster:")
   AllClusters = levels(id_x)
   cl=1
-  for (cl in 1:l(AllClusters)) { 
+  for (cl in 1:l(AllClusters)) {
     print(cl)
     cells_x = WhichCells(combined.obj, idents = id_x[cl])
     cells_perLib = stringr::str_split_fixed(cells_x, pattern = '_', n = 2)
@@ -25,7 +25,7 @@ get.ls.of.CBCs <- function(scobj = combined.obj, ident = 'integrated_snn_res.0.3
     ls_CBCs[[cl]] <- ls_cells_clX_perLib <- split(x = cells_perLib, f = cells_perLib[,3])
   }
   revlist = reverse.list.hierarchy(ls_CBCs)
-  
+
   if (!isFALSE(trim.libName)) { # remove .WT and .TSC2
     names(revlist) = stringr::str_split_fixed(names(revlist), pattern = "\\.", n=2)[,1]
   }
@@ -42,7 +42,7 @@ get.ls.of.CBCs <- function(scobj = combined.obj, ident = 'integrated_snn_res.0.3
 #  ------------------------------------------------------------
 
 write.out.CBCs.per.cl <- function(ls_CBCs = ls.of.CBCs, add.suffix="-1",
-                                  ident = 'integrated_snn_res.0.3', 
+                                  ident = 'integrated_snn_res.0.3',
                                   openOutDir=T, writeMeta=T) { # take the output of get.ls.of.CBCs() as input, and write out as csv
   (depth = l(ls_CBCs))
   (dsets = names(ls_CBCs))
@@ -67,17 +67,17 @@ write.out.CBCs.per.cl <- function(ls_CBCs = ls.of.CBCs, add.suffix="-1",
 # write.out.CBCs.per.cl()
 
 #  ------------------------------------------------------------
-write.out.config.file.template <- function(libname=names(ls.of.CBCs)[2], 
+write.out.config.file.template <- function(libname=names(ls.of.CBCs)[2],
                                            bampath="/Volumes/abel/Data/bam.files.cellranger/",
                                            openOutDir=T) { # take the output of get.ls.of.CBCs() as input, and write out as csv
   outputDir2 = p0(OutDir,"CBCs/ConfigFiles/")
-  
+
   ConfigFileTemplate = cbind(
     ppp("Cl", names(ls.of.CBCs[[1]]) ),
     rep(libname, length(ls.of.CBCs[[1]]) ),
     p0(bampath, names(ls.of.CBCs[[1]]) )
   )
-  
+
   colnames(ConfigFileTemplate) = c("SAMPLEID","CONDITION", "SRC")
   write.csv(ConfigFileTemplate, file = p0(outputDir2,"/ConfigFileTemplate.",libname,".csv"),
             quote = F, row.names = F, col.names = NULL)
@@ -95,14 +95,14 @@ write.out.config.file.template()
 #          l(levels(id_x)),"clusters [",levels(id_x),"] )")
 #   ls_CBCs = list.fromNames(levels(id_x))
 #   print("Cluster:")
-#   for (cl in 1:l(levels(id_x))) { 
+#   for (cl in 1:l(levels(id_x))) {
 #     print(cl)
 #     cells_x = WhichCells(combined.obj, idents = id_x[cl])
 #     cells_perLib = stringr::str_split_fixed(cells_x, pattern = '_', n = 2)
 #     ls_CBCs[[cl]] <- ls_cells_clX_perLib <- split(x = cells_perLib, f = cells_perLib[,2])
 #   }
 #   revlist = reverse.list.hierarchy(ls_CBCs)
-#   
+#
 #   if (plotit) {
 #     for (i in 1:l(revlist)) {
 #       ClusterSizes = unlapply(revlist[[i]], l)
