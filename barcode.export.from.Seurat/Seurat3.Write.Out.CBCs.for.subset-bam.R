@@ -47,20 +47,20 @@ write.out.CBCs.per.cl <- function(ls_CBCs = ls.of.CBCs, add.suffix="-1",
   (depth = l(ls_CBCs))
   (dsets = names(ls_CBCs))
   for (i in 1:l(dsets)) {
-    outputDir = p0(OutDir,"CBCs/", dsets[i])
+    outputDir = paste0(OutDir,"CBCs/", dsets[i])
     dir.create(outputDir, recursive = T)
     inside.ls = ls_CBCs[[i]]
     for (j in 1:l(inside.ls)) {
       CBCs = inside.ls[[j]]
-      if (!isFALSE(add.suffix)) CBCs = p0(CBCs,add.suffix)
-      write.simple.vec(input_vec =  CBCs, ManualName =  p0(outputDir,"/Cl.", (j-1), ".csv"))
+      if (!isFALSE(add.suffix)) CBCs = paste0(CBCs,add.suffix)
+      write.simple.vec(input_vec =  CBCs, ManualName =  paste0(outputDir,"/Cl.", (j-1), ".csv"))
     }
   }
   if (writeMeta) {
     rez = str_split_fixed(ident,"snn_", n=2)[,2]
     (text_ = paste(names(ls_CBCs[[1]]), rez, idate()))
     write.simple.vec(input_vec =  text_, ManualName =
-                       p0(OutDir,"CBCs/CBC.",rez,"__", idate(),".info"))
+                       paste0(OutDir,"CBCs/CBC.",rez,"__", idate(),".info"))
   }
   if (openOutDir) system(paste("open", outputDir))
 }
@@ -70,16 +70,16 @@ write.out.CBCs.per.cl <- function(ls_CBCs = ls.of.CBCs, add.suffix="-1",
 write.out.config.file.template <- function(libname=names(ls.of.CBCs)[2],
                                            bampath="/Volumes/abel/Data/bam.files.cellranger/",
                                            openOutDir=T) { # take the output of get.ls.of.CBCs() as input, and write out as csv
-  outputDir2 = p0(OutDir,"CBCs/ConfigFiles/")
+  outputDir2 = paste0(OutDir,"CBCs/ConfigFiles/")
 
   ConfigFileTemplate = cbind(
     ppp("Cl", names(ls.of.CBCs[[1]]) ),
     rep(libname, length(ls.of.CBCs[[1]]) ),
-    p0(bampath, names(ls.of.CBCs[[1]]) )
+    paste0(bampath, names(ls.of.CBCs[[1]]) )
   )
 
   colnames(ConfigFileTemplate) = c("SAMPLEID","CONDITION", "SRC")
-  write.csv(ConfigFileTemplate, file = p0(outputDir2,"/ConfigFileTemplate.",libname,".csv"),
+  write.csv(ConfigFileTemplate, file = paste0(outputDir2,"/ConfigFileTemplate.",libname,".csv"),
             quote = F, row.names = F, col.names = NULL)
   if (openOutDir) system(paste("open", outputDir2))
 }
